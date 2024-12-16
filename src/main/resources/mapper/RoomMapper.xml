@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haole.bupthotelbackend.mapper.RoomMapper">
+
+    <resultMap id="BaseResultMap" type="com.haole.bupthotelbackend.model.domain.Room">
+            <id property="roomNumber" column="room_number" jdbcType="VARCHAR"/>
+            <result property="isOccupied" column="is_occupied" jdbcType="TINYINT"/>
+            <result property="checkInDate" column="check_in_date" jdbcType="TIMESTAMP"/>
+            <result property="checkOutDate" column="check_out_date" jdbcType="TIMESTAMP"/>
+            <result property="totalFee" column="total_fee" jdbcType="DECIMAL"/>
+            <result property="environmentTemperature" column="environment_temperature" jdbcType="INTEGER"/>
+            <result property="currentTemperature" column="current_temperature" jdbcType="DECIMAL"/>
+            <result property="power" column="power" jdbcType="TINYINT"/>
+            <result property="acUsageTime" column="ac_usage_time" jdbcType="INTEGER"/>
+            <result property="acFee" column="ac_fee" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        room_number,is_occupied,check_in_date,
+        check_out_date,total_fee,environment_temperature,
+        current_temperature,power,ac_usage_time,
+        ac_fee
+    </sql>
+</mapper>

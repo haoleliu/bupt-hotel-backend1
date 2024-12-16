@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haole.bupthotelbackend.mapper.AirconditionerMapper">
+
+    <resultMap id="BaseResultMap" type="com.haole.bupthotelbackend.model.domain.Airconditioner">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="roomId" column="room_id" jdbcType="VARCHAR"/>
+            <result property="temperature" column="temperature" jdbcType="DECIMAL"/>
+            <result property="mode" column="mode" jdbcType="VARCHAR"/>
+            <result property="speed" column="speed" jdbcType="INTEGER"/>
+            <result property="queue" column="queue" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,room_id,temperature,
+        mode,speed,queue
+    </sql>
+</mapper>
