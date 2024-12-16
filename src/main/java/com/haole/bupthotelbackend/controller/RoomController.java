@@ -46,6 +46,7 @@ public class RoomController {
             log.info("checkOut: room_No={}, result=null");
             return false;
         }
+        System.out.println();
         roomService.lambdaUpdate().eq(Room::getRoomNumber, room_No)
                 .set(Room::getCheckInDate, null)
                 .set(Room::getCheckOutDate, null)
