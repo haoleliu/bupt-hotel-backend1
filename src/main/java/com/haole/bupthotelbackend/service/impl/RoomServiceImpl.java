@@ -2,16 +2,15 @@ package com.haole.bupthotelbackend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.haole.bupthotelbackend.model.Bill;
 import com.haole.bupthotelbackend.model.domain.Customer;
 import com.haole.bupthotelbackend.model.domain.Room;
 import com.haole.bupthotelbackend.service.CustomerService;
 import com.haole.bupthotelbackend.service.RoomService;
 import com.haole.bupthotelbackend.mapper.RoomMapper;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
 * @author liu haole
@@ -43,6 +42,17 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
                 .set("total_fee", 0);
         customerService.lambdaUpdate().eq(Customer::getName, name).set(Customer::getRoomNumberId, roomNo);
         return true;
+    }
+
+    @Override
+    public Bill showBill(Integer roomNo) {
+        Bill bill = new Bill();
+        /**
+         * 风速1,2,3对应费率为一小时1，2，3元
+         * 房间费用12345分别为100，125，150，200，100每天
+         */
+        Room room = this.getRoomByNo(roomNo);
+        return null;
     }
 }
 

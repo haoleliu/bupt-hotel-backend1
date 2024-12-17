@@ -1,6 +1,7 @@
 package com.haole.bupthotelbackend.controller;
 
 
+import com.haole.bupthotelbackend.model.Bill;
 import com.haole.bupthotelbackend.model.domain.Customer;
 import com.haole.bupthotelbackend.model.domain.Room;
 import com.haole.bupthotelbackend.request.CheckInRequest;
@@ -56,6 +57,16 @@ public class RoomController {
                 .eq(Customer::getRoomNumberId, room_No)
                 .set(Customer::getRoomNumberId, null);
         return true;
+    }
+
+
+    /**
+     * 出示详单
+     */
+    @RequestMapping("/showBill")
+    public Bill showBill(@RequestParam Integer room_No) {
+
+        return roomService.showBill(room_No);
     }
 
 

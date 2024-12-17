@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import lombok.Data;
 
 /**
@@ -46,6 +47,16 @@ public class Airconditioner implements Serializable {
      */
     private String queue;
 
+    /**
+     * 
+     */
+    private Date lastStartTime;
+
+    /**
+     * 
+     */
+    private Integer power;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -66,7 +77,9 @@ public class Airconditioner implements Serializable {
             && (this.getTemperature() == null ? other.getTemperature() == null : this.getTemperature().equals(other.getTemperature()))
             && (this.getMode() == null ? other.getMode() == null : this.getMode().equals(other.getMode()))
             && (this.getSpeed() == null ? other.getSpeed() == null : this.getSpeed().equals(other.getSpeed()))
-            && (this.getQueue() == null ? other.getQueue() == null : this.getQueue().equals(other.getQueue()));
+            && (this.getQueue() == null ? other.getQueue() == null : this.getQueue().equals(other.getQueue()))
+            && (this.getLastStartTime() == null ? other.getLastStartTime() == null : this.getLastStartTime().equals(other.getLastStartTime()))
+            && (this.getPower() == null ? other.getPower() == null : this.getPower().equals(other.getPower()));
     }
 
     @Override
@@ -79,6 +92,8 @@ public class Airconditioner implements Serializable {
         result = prime * result + ((getMode() == null) ? 0 : getMode().hashCode());
         result = prime * result + ((getSpeed() == null) ? 0 : getSpeed().hashCode());
         result = prime * result + ((getQueue() == null) ? 0 : getQueue().hashCode());
+        result = prime * result + ((getLastStartTime() == null) ? 0 : getLastStartTime().hashCode());
+        result = prime * result + ((getPower() == null) ? 0 : getPower().hashCode());
         return result;
     }
 
@@ -94,6 +109,8 @@ public class Airconditioner implements Serializable {
         sb.append(", mode=").append(mode);
         sb.append(", speed=").append(speed);
         sb.append(", queue=").append(queue);
+        sb.append(", lastStartTime=").append(lastStartTime);
+        sb.append(", power=").append(power);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

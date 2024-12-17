@@ -2,15 +2,20 @@ package com.haole.bupthotelbackend.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.haole.bupthotelbackend.model.StatusRsp;
 import com.haole.bupthotelbackend.model.domain.Airconditioner;
 import com.haole.bupthotelbackend.model.domain.Customer;
 import com.haole.bupthotelbackend.request.LoginRequest;
+import com.haole.bupthotelbackend.request.UpdateRequest;
 import com.haole.bupthotelbackend.resp.LoginResp;
 import com.haole.bupthotelbackend.service.AirconditionerService;
 import com.haole.bupthotelbackend.service.CustomerService;
+import com.haole.bupthotelbackend.service.RoomService;
 import jakarta.annotation.Resource;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -23,6 +28,9 @@ public class AirconditionController {
 
     @Resource
     private AirconditionerService airconditionerService;
+
+    @Resource
+    private RoomService roomService;
 
     @RequestMapping("/customer-login/")
     public LoginResp login(@RequestBody LoginRequest request){
@@ -44,6 +52,21 @@ public class AirconditionController {
     @RequestMapping("/getData")
     public List<Airconditioner> getData(){
         return airconditionerService.list();
+    }
+
+
+    @RequestMapping("/air-conditioner/update/{id}/")
+    public void updateAirconditioner(@PathVariable("id") Long room_number, @RequestBody UpdateRequest request){
+
+        Boolean result = airconditionerService.updateAirconditioner(room_number, request);
+
+        System.out.println(result);
+
+    }
+
+    @RequestMapping("/air-conditioner/{id}/")
+    public StatusRsp getAirconditioner(@PathVariable("id") Long room_number){
+        return airconditionerService.getAirconditioner(room_number);
     }
 
 
