@@ -13,7 +13,7 @@
             <result property="environmentTemperature" column="environment_temperature" jdbcType="INTEGER"/>
             <result property="currentTemperature" column="current_temperature" jdbcType="DECIMAL"/>
             <result property="power" column="power" jdbcType="TINYINT"/>
-            <result property="acUsageTime" column="ac_usage_time" jdbcType="INTEGER"/>
+            <result property="acUsageTime" column="ac_usage_time" jdbcType="DECIMAL"/>
             <result property="acFee" column="ac_fee" jdbcType="DECIMAL"/>
     </resultMap>
 

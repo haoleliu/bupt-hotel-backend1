@@ -9,10 +9,12 @@ import java.math.BigDecimal;
 @Data
 public class StatusRsp implements Serializable {
 
+    private Boolean power;
+
     private BigDecimal cost;
 
     private String queue;
 
-    private Integer time;
+    private BigDecimal time;
 
 }

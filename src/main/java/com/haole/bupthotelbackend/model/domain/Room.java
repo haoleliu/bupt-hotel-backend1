@@ -59,7 +59,7 @@ public class Room implements Serializable {
     /**
      * 
      */
-    private Integer acUsageTime;
+    private BigDecimal acUsageTime;
 
     /**
      * 

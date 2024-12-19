@@ -16,7 +16,7 @@ public interface RoomService extends IService<Room> {
     Room getRoomByNo(int room_No);
 
 
-    boolean checkIn(Integer roomNo, String name, LocalDate checkInTime, LocalDate checkOutTime);
+    Room checkIn(Integer roomNo, String name, LocalDate checkInTime, LocalDate checkOutTime);
 
     Bill showBill(Integer roomNo);
 }

@@ -21,6 +21,7 @@ public class RoomController {
     @Resource
     private RoomService roomService;
 
+    @Resource
     private CustomerService customerService;
 
     @RequestMapping("/getRoom")
@@ -29,8 +30,15 @@ public class RoomController {
     }
 
     @RequestMapping("/check-in/")
-    public boolean checkIn(@RequestBody CheckInRequest request) {
-        boolean result = roomService.checkIn(
+    public Room checkIn(@RequestBody CheckInRequest request) {
+        Customer customer = new Customer();
+        customer.setName(request.getName());
+        customer.setPhone(request.getPhone());
+        customer.setIdCard(request.getIdCard());
+        customer.setRoomNumberId(request.getRoomNumber());
+        customerService.save(customer);
+        log.info("顾客信息：{}", customer);
+        Room result = roomService.checkIn(
                 request.getRoomNumber(),
                 request.getName(),
                 request.getCheckInDate(),
@@ -55,7 +63,8 @@ public class RoomController {
                 .update();
         customerService.lambdaUpdate()
                 .eq(Customer::getRoomNumberId, room_No)
-                .set(Customer::getRoomNumberId, null);
+                .set(Customer::getRoomNumberId, null)
+                .update();
         return true;
     }
 
