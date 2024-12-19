@@ -35,7 +35,7 @@ public class RoomController {
         customer.setName(request.getName());
         customer.setPhone(request.getPhone());
         customer.setIdCard(request.getIdCard());
-        customer.setRoomNumberId(request.getRoomNumber());
+        customer.setRoomNumberId(String.valueOf(request.getRoomNumber()));
         customerService.save(customer);
         log.info("顾客信息：{}", customer);
         Room result = roomService.checkIn(

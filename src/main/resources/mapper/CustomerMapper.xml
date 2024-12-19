@@ -7,12 +7,13 @@
     <resultMap id="BaseResultMap" type="com.haole.bupthotelbackend.model.domain.Customer">
             <id property="idCard" column="id_card" jdbcType="VARCHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="isIn" column="is_in" jdbcType="TINYINT"/>
             <result property="phone" column="phone" jdbcType="VARCHAR"/>
             <result property="roomNumberId" column="room_number_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id_card,name,phone,
-        room_number_id
+        id_card,name,is_in,
+        phone,room_number_id
     </sql>
 </mapper>

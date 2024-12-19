@@ -12,19 +12,20 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
-* @author liu haole
-* @description 针对表【room】的数据库操作Service实现
-* @createDate 2024-12-15 14:57:28
-*/
+ * @author liu haole
+ * @description 针对表【room】的数据库操作Service实现
+ * @createDate 2024-12-15 14:57:28
+ */
 @Slf4j
 @Service
 public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
-    implements RoomService{
+        implements RoomService {
 
 
     @Resource
@@ -32,7 +33,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
 
     @Override
     public Room getRoomByNo(int room_No) {
-        return this.lambdaQuery().eq(Room::getRoomNumber,room_No).one();
+        return this.lambdaQuery().eq(Room::getRoomNumber, room_No).one();
     }
 
     @Override
@@ -42,12 +43,28 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
             log.info("房间已被占用,room_number:{}", roomNo);
             return null;
         }
+        Duration duration = Duration.between(checkInTime, checkOutTime);
+        long days = duration.toDays();
         UpdateWrapper<Room> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("room_number", roomNo)
                 .set("is_occupied", 1)
                 .set("check_in_date", checkInTime)
                 .set("check_out_date", checkOutTime)
                 .set("total_fee", 0);
+        switch (roomNo) {
+            case 1, 5:
+                updateWrapper.set("total_fee", days * 100);
+                break;
+            case 2:
+                updateWrapper.set("total_fee", days * 125);
+                break;
+            case 3:
+                updateWrapper.set("total_fee", days * 150);
+                break;
+            case 4:
+                updateWrapper.set("total_fee", days * 200);
+                break;
+        }
         customerService.lambdaUpdate().eq(Customer::getName, name).set(Customer::getRoomNumberId, roomNo).update();
         this.update(updateWrapper);
         Room updatedRoom = this.lambdaQuery().eq(Room::getRoomNumber, roomNo).one();

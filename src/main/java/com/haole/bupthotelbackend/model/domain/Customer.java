@@ -27,12 +27,17 @@ public class Customer implements Serializable {
     /**
      * 
      */
+    private Integer isIn;
+
+    /**
+     * 
+     */
     private String phone;
 
     /**
      * 
      */
-    private Integer roomNumberId;
+    private String roomNumberId;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -51,6 +56,7 @@ public class Customer implements Serializable {
         Customer other = (Customer) that;
         return (this.getIdCard() == null ? other.getIdCard() == null : this.getIdCard().equals(other.getIdCard()))
             && (this.getName() == null ? other.getName() == null : this.getName().equals(other.getName()))
+            && (this.getIsIn() == null ? other.getIsIn() == null : this.getIsIn().equals(other.getIsIn()))
             && (this.getPhone() == null ? other.getPhone() == null : this.getPhone().equals(other.getPhone()))
             && (this.getRoomNumberId() == null ? other.getRoomNumberId() == null : this.getRoomNumberId().equals(other.getRoomNumberId()));
     }
@@ -61,6 +67,7 @@ public class Customer implements Serializable {
         int result = 1;
         result = prime * result + ((getIdCard() == null) ? 0 : getIdCard().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+        result = prime * result + ((getIsIn() == null) ? 0 : getIsIn().hashCode());
         result = prime * result + ((getPhone() == null) ? 0 : getPhone().hashCode());
         result = prime * result + ((getRoomNumberId() == null) ? 0 : getRoomNumberId().hashCode());
         return result;
@@ -74,6 +81,7 @@ public class Customer implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", idCard=").append(idCard);
         sb.append(", name=").append(name);
+        sb.append(", isIn=").append(isIn);
         sb.append(", phone=").append(phone);
         sb.append(", roomNumberId=").append(roomNumberId);
         sb.append(", serialVersionUID=").append(serialVersionUID);
