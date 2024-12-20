@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haole.bupthotelbackend.mapper.WaitqueueMapper">
+
+    <resultMap id="BaseResultMap" type="com.haole.bupthotelbackend.model.domain.Waitqueue">
+            <id property="roomNum" column="room_num" jdbcType="INTEGER"/>
+            <result property="weight" column="weight" jdbcType="DECIMAL"/>
+            <result property="lastRequestTime" column="last_request_time" jdbcType="TIMESTAMP"/>
+            <result property="isWaiting" column="is_waiting" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        room_num,weight,last_request_time,
+        is_waiting
+    </sql>
+</mapper>
