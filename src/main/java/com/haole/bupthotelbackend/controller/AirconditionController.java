@@ -56,11 +56,12 @@ public class AirconditionController {
 
 
     @RequestMapping("/air-conditioner/update/{id}/")
-    public void updateAirconditioner(@PathVariable("id") Long room_number, @RequestBody UpdateRequest request){
+    public Boolean updateAirconditioner(@PathVariable("id") Long room_number, @RequestBody UpdateRequest request){
 
         Boolean result = airconditionerService.updateAirconditioner(room_number, request);
 
-        System.out.println(result);
+
+        return result;
 
     }
 
