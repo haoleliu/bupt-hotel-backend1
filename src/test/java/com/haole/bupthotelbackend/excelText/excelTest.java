@@ -15,7 +15,7 @@ public class excelTest {
 
     @Test
     public void excelTest(){
-        Integer room_num=1;
+        Integer room_num=4;
         excelService.writeContract(room_num);
         
     }
