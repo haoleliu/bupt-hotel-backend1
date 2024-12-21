@@ -2,6 +2,7 @@ package com.haole.bupthotelbackend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.haole.bupthotelbackend.model.SpeedEnums;
 import com.haole.bupthotelbackend.model.StatusRsp;
 import com.haole.bupthotelbackend.model.domain.Airconditioner;
 import com.haole.bupthotelbackend.model.domain.Room;
@@ -164,6 +165,8 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
             this.lambdaUpdate().eq(Airconditioner::getId, room_number).update(airconditioner);
         }
         StatusRsp result = new StatusRsp();
+        result.setMode(airconditioner.getMode());
+        result.setSpeed(SpeedEnums.getEnumByValue(airconditioner.getSpeed()).getText());
         result.setPower((airconditioner.getPower() == 1));
         result.setCost(room.getAcFee());
         //queue里面

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
 @RestController
 public class ContractController {
 

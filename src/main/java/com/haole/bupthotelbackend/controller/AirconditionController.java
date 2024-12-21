@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
 @RestController
 public class AirconditionController {
 
@@ -59,7 +59,7 @@ public class AirconditionController {
     public Boolean updateAirconditioner(@PathVariable("id") Long room_number, @RequestBody UpdateRequest request){
 
         Boolean result = airconditionerService.updateAirconditioner(room_number, request);
-
+        airconditionerService.getAirconditioner(room_number);
 
         return result;
 

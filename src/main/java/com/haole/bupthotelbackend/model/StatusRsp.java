@@ -17,4 +17,8 @@ public class StatusRsp implements Serializable {
 
     private BigDecimal time;
 
+    private String mode;
+
+    private String speed;
+
 }

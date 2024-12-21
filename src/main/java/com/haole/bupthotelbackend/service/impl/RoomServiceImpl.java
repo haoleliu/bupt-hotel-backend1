@@ -43,7 +43,9 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
             log.info("房间已被占用,room_number:{}", roomNo);
             return null;
         }
-        Duration duration = Duration.between(checkInTime, checkOutTime);
+        LocalDateTime checkInDateTime = checkInTime.atStartOfDay();
+        LocalDateTime checkOutDateTime = checkOutTime.atStartOfDay();
+        Duration duration = Duration.between(checkInDateTime, checkOutDateTime);
         long days = duration.toDays();
         UpdateWrapper<Room> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("room_number", roomNo)
@@ -65,7 +67,11 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
                 updateWrapper.set("total_fee", days * 200);
                 break;
         }
-        customerService.lambdaUpdate().eq(Customer::getName, name).set(Customer::getRoomNumberId, roomNo).update();
+        customerService.lambdaUpdate()
+                .eq(Customer::getName, name)
+                .set(Customer::getRoomNumberId, roomNo)
+                .set(Customer::getIsIn,1)
+                .update();
         this.update(updateWrapper);
         Room updatedRoom = this.lambdaQuery().eq(Room::getRoomNumber, roomNo).one();
         log.info("入住成功,room:{}", updatedRoom);

@@ -46,7 +46,10 @@ public class ExcelServiceImpl implements ExcelService {
 
     public void writeContract(Integer room_number) {
         Room room = roomService.getById(room_number);
-        Customer customer = customerService.lambdaQuery().eq(Customer::getRoomNumberId, room_number).one();
+        Customer customer = customerService.lambdaQuery()
+                .eq(Customer::getRoomNumberId, room_number)
+                .eq(Customer::getIsIn,1)
+                .one();
 
         // 注意 simpleWrite在数据量不大的情况下可以使用（5000以内，具体也要看实际情况），数据量大参照 重复多次写入
         String room_no = String.valueOf(room_number);

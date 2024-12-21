@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @Slf4j
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
 @RestController
 public class RoomController {
 
@@ -31,6 +31,14 @@ public class RoomController {
 
     @RequestMapping("/check-in/")
     public Room checkIn(@RequestBody CheckInRequest request) {
+        Customer one = customerService.lambdaQuery()
+                .eq(Customer::getRoomNumberId, request.getRoomNumber())
+                .eq(Customer::getIsIn, 1)
+                .one();
+        if (one != null) {
+            log.info("房间已被入住");
+            return null;
+        }
         Customer customer = new Customer();
         customer.setName(request.getName());
         customer.setPhone(request.getPhone());
@@ -48,8 +56,8 @@ public class RoomController {
         return result;
     }
 
-    @RequestMapping("/checkOut")
-    public boolean checkOut(@RequestParam Integer room_No) {
+    @RequestMapping("/checkout/room/{room_No}")
+    public boolean checkOut(@PathVariable Integer room_No) {
         Room result = roomService.lambdaQuery().eq(Room::getRoomNumber, room_No).one();
         if (result == null) {
             log.info("checkOut: room_No={}, result=null");
@@ -64,6 +72,7 @@ public class RoomController {
         customerService.lambdaUpdate()
                 .eq(Customer::getRoomNumberId, room_No)
                 .set(Customer::getRoomNumberId, null)
+                .set(Customer::getIsIn, 0)
                 .update();
         return true;
     }

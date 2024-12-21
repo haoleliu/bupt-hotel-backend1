@@ -19,7 +19,7 @@ import static com.haole.bupthotelbackend.model.SpeedEnums.LOW;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8080", allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
 public class MonitorController {
 
     @Resource

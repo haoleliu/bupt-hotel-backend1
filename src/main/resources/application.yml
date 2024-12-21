@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bupthotel
+    url: jdbc:mysql://sh-cynosdbmysql-grp-9geeprfi.sql.tencentcdb.com:26708/springboot_demo
     username: root
-    password: 1234
+    password: Q9BFzqAx
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true

@@ -57,6 +57,19 @@ create table waitqueue
     last_request_time timestamp null,
     is_waiting        int       null
 );
+-- auto-generated definition
+create table user
+(
+    username   varchar(200)                  null,
+    id         int auto_increment
+        primary key,
+    password   varchar(100) default '123456' null,
+    createTime datetime                      null,
+    updateTime datetime                      null,
+    gender     tinyint unsigned              null,
+    account    decimal      default 0        not null comment '余额'
+);
+
 
 
 
