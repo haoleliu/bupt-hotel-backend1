@@ -57,6 +57,11 @@ public class Airconditioner implements Serializable {
      */
     private Integer power;
 
+    /**
+     * 
+     */
+    private BigDecimal acUsageTime;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -79,7 +84,8 @@ public class Airconditioner implements Serializable {
             && (this.getSpeed() == null ? other.getSpeed() == null : this.getSpeed().equals(other.getSpeed()))
             && (this.getQueue() == null ? other.getQueue() == null : this.getQueue().equals(other.getQueue()))
             && (this.getLastStartTime() == null ? other.getLastStartTime() == null : this.getLastStartTime().equals(other.getLastStartTime()))
-            && (this.getPower() == null ? other.getPower() == null : this.getPower().equals(other.getPower()));
+            && (this.getPower() == null ? other.getPower() == null : this.getPower().equals(other.getPower()))
+            && (this.getAcUsageTime() == null ? other.getAcUsageTime() == null : this.getAcUsageTime().equals(other.getAcUsageTime()));
     }
 
     @Override
@@ -94,6 +100,7 @@ public class Airconditioner implements Serializable {
         result = prime * result + ((getQueue() == null) ? 0 : getQueue().hashCode());
         result = prime * result + ((getLastStartTime() == null) ? 0 : getLastStartTime().hashCode());
         result = prime * result + ((getPower() == null) ? 0 : getPower().hashCode());
+        result = prime * result + ((getAcUsageTime() == null) ? 0 : getAcUsageTime().hashCode());
         return result;
     }
 
@@ -111,6 +118,7 @@ public class Airconditioner implements Serializable {
         sb.append(", queue=").append(queue);
         sb.append(", lastStartTime=").append(lastStartTime);
         sb.append(", power=").append(power);
+        sb.append(", acUsageTime=").append(acUsageTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

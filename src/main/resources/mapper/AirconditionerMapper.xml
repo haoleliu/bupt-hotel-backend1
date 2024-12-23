@@ -13,11 +13,12 @@
             <result property="queue" column="queue" jdbcType="VARCHAR"/>
             <result property="lastStartTime" column="last_start_time" jdbcType="TIMESTAMP"/>
             <result property="power" column="power" jdbcType="TINYINT"/>
+            <result property="acUsageTime" column="ac_usage_time" jdbcType="DECIMAL"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,room_id,temperature,
         mode,speed,queue,
-        last_start_time,power
+        last_start_time,power,ac_usage_time
     </sql>
 </mapper>

@@ -9,10 +9,11 @@
             <result property="weight" column="weight" jdbcType="DECIMAL"/>
             <result property="lastRequestTime" column="last_request_time" jdbcType="TIMESTAMP"/>
             <result property="isWaiting" column="is_waiting" jdbcType="INTEGER"/>
+            <result property="waitingTime" column="waiting_time" jdbcType="DECIMAL"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         room_num,weight,last_request_time,
-        is_waiting
+        is_waiting,waiting_time
     </sql>
 </mapper>

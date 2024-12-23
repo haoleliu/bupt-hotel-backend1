@@ -1,10 +1,7 @@
 package com.haole.bupthotelbackend.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import com.haole.bupthotelbackend.common.R;
-import com.haole.bupthotelbackend.common.error;
 import com.haole.bupthotelbackend.mapper.UserMapper;
 import com.haole.bupthotelbackend.model.domain.User;
 import com.haole.bupthotelbackend.request.UserLoginRequest;
@@ -13,12 +10,9 @@ import com.haole.bupthotelbackend.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

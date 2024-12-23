@@ -38,6 +38,7 @@ public class MonitorController {
         Room room = roomService.getRoomByNo(room_num);
         Airconditioner airconditioner = airconditionerService.lambdaQuery().eq(Airconditioner::getRoomId, room_num).one();
         Waitqueue waitqueueThis = waitqueueService.lambdaQuery().eq(Waitqueue::getRoomNum, room_num).one();
+
         result.setRoomNumber(room_num);
         result.setPower(airconditioner.getPower()==1);
         result.setMode(airconditioner.getMode());

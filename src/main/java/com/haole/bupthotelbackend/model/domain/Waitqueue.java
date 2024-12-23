@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
 
@@ -36,6 +37,11 @@ public class Waitqueue implements Serializable {
      */
     private Integer isWaiting;
 
+    /**
+     * 
+     */
+    private BigDecimal waitingTime;
+
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -54,7 +60,8 @@ public class Waitqueue implements Serializable {
         return (this.getRoomNum() == null ? other.getRoomNum() == null : this.getRoomNum().equals(other.getRoomNum()))
             && (this.getWeight() == null ? other.getWeight() == null : this.getWeight().equals(other.getWeight()))
             && (this.getLastRequestTime() == null ? other.getLastRequestTime() == null : this.getLastRequestTime().equals(other.getLastRequestTime()))
-            && (this.getIsWaiting() == null ? other.getIsWaiting() == null : this.getIsWaiting().equals(other.getIsWaiting()));
+            && (this.getIsWaiting() == null ? other.getIsWaiting() == null : this.getIsWaiting().equals(other.getIsWaiting()))
+            && (this.getWaitingTime() == null ? other.getWaitingTime() == null : this.getWaitingTime().equals(other.getWaitingTime()));
     }
 
     @Override
@@ -65,6 +72,7 @@ public class Waitqueue implements Serializable {
         result = prime * result + ((getWeight() == null) ? 0 : getWeight().hashCode());
         result = prime * result + ((getLastRequestTime() == null) ? 0 : getLastRequestTime().hashCode());
         result = prime * result + ((getIsWaiting() == null) ? 0 : getIsWaiting().hashCode());
+        result = prime * result + ((getWaitingTime() == null) ? 0 : getWaitingTime().hashCode());
         return result;
     }
 
@@ -78,6 +86,7 @@ public class Waitqueue implements Serializable {
         sb.append(", weight=").append(weight);
         sb.append(", lastRequestTime=").append(lastRequestTime);
         sb.append(", isWaiting=").append(isWaiting);
+        sb.append(", waitingTime=").append(waitingTime);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

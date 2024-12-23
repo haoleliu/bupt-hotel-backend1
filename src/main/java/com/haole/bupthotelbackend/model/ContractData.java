@@ -6,13 +6,8 @@ import com.alibaba.excel.util.ListUtils;
 import com.haole.bupthotelbackend.model.domain.Room;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 @Data
 @EqualsAndHashCode
