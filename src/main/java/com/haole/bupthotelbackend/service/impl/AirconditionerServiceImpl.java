@@ -9,6 +9,7 @@ import com.haole.bupthotelbackend.model.domain.Room;
 import com.haole.bupthotelbackend.model.domain.Waitqueue;
 import com.haole.bupthotelbackend.request.UpdateRequest;
 import com.haole.bupthotelbackend.service.AirconditionerService;
+import com.haole.bupthotelbackend.service.ExcelService;
 import com.haole.bupthotelbackend.mapper.AirconditionerMapper;
 import com.haole.bupthotelbackend.service.RoomService;
 import com.haole.bupthotelbackend.service.WaitqueueService;
@@ -41,7 +42,12 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
 
     @Resource
     private WaitqueueService waitqueueService;
+    
+    @Resource
+    private AirconditionerMapper airconditionerMapper;
 
+    @Resource
+    private ExcelService excelService;
 
     @Override
     public Boolean updateAirconditioner(Long room_number, UpdateRequest request) {
@@ -121,6 +127,13 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
         );
         return result;
     }
+    @Override
+    public Airconditioner getByRoomNumber(String roomNumber) {
+        QueryWrapper<Airconditioner> wrapper = new QueryWrapper<>();
+        wrapper.eq("roomId", roomNumber);
+        return this.getOne(wrapper);
+    }
+
 
     @Override
     public StatusRsp getAirconditioner(Long room_number) {

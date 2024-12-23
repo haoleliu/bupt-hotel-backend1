@@ -2,6 +2,8 @@ package com.haole.bupthotelbackend.mapper;
 
 import com.haole.bupthotelbackend.model.domain.Airconditioner;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
 * @author liu haole
@@ -10,7 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.haole.bupthotelbackend.model.domain.Airconditioner
 */
 public interface AirconditionerMapper extends BaseMapper<Airconditioner> {
-
+    @Select("SELECT * FROM airconditioner WHERE roomId = #{roomNumber} LIMIT 1")
+    Airconditioner selectByRoomNumber(String roomNumber);
 }
 
 

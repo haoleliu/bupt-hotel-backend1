@@ -15,6 +15,7 @@ public interface AirconditionerService extends IService<Airconditioner> {
 
     public Boolean updateAirconditioner(Long room_number,UpdateRequest request);
 
+    public Airconditioner getByRoomNumber(String roomNumber);
     public StatusRsp getAirconditioner(Long room_number);
 
 }
