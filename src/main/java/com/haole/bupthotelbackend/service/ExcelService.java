@@ -9,5 +9,5 @@ import org.springframework.stereotype.Service;
 public interface ExcelService {
 
     public void writeContract(Integer room_number);
-    public void loadServiceDataFromDatabase(Integer roomNumber);
+
 }

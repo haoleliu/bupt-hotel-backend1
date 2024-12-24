@@ -33,4 +33,3 @@ public class ContractData {
     private String ignore;
 
 }
-
