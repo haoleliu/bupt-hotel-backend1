@@ -246,12 +246,12 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
                 //房间温度小于环境温度
                 roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
                         .set(Room::getCurrentTemperature,
-                                room.getCurrentTemperature().add(BigDecimal.valueOf( 0.5*seconds/ 60)));
+                                room.getCurrentTemperature().add(BigDecimal.valueOf(1.0*RateEnums.getEnumByValue(rate).getText()*seconds/ 60)));
             } else {
                 //房间温度大于环境温度
                 roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
                         .set(Room::getCurrentTemperature,
-                                room.getCurrentTemperature().subtract(BigDecimal.valueOf((0.5*seconds / 60))));
+                                room.getCurrentTemperature().subtract(BigDecimal.valueOf((1.0*RateEnums.getEnumByValue(rate).getText()*seconds / 60))));
             }
         }
         StatusRsp result = new StatusRsp();

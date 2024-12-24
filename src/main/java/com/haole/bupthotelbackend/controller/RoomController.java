@@ -58,20 +58,22 @@ public class RoomController {
 
     @RequestMapping("/checkout/room/{room_No}")
     public boolean checkOut(@PathVariable Integer room_No) {
-        Room result = roomService.lambdaQuery().eq(Room::getRoomNumber, room_No).one();
+        log.info("登出房间号:{}",room_No);
+        String roomNum=String.valueOf(room_No);
+        Room result = roomService.lambdaQuery().eq(Room::getRoomNumber, roomNum).one();
         if (result == null) {
             log.info("checkOut: room_No={}, result=null");
             return false;
         }
         System.out.println();
-        roomService.lambdaUpdate().eq(Room::getRoomNumber, room_No)
+        roomService.lambdaUpdate()
+                .eq(Room::getRoomNumber, roomNum)
                 .set(Room::getCheckInDate, null)
                 .set(Room::getCheckOutDate, null)
                 .set(Room::getIsOccupied, 0)
                 .update();
         customerService.lambdaUpdate()
-                .eq(Customer::getRoomNumberId, room_No)
-                .set(Customer::getRoomNumberId, null)
+                .eq(Customer::getRoomNumberId, roomNum)
                 .set(Customer::getIsIn, 0)
                 .update();
         return true;
