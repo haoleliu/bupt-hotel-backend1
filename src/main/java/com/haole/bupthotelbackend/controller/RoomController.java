@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
@@ -56,10 +57,11 @@ public class RoomController {
         return result;
     }
 
-    @RequestMapping("/checkout/room/{room_No}")
-    public boolean checkOut(@PathVariable Integer room_No) {
-        log.info("登出房间号:{}",room_No);
-        String roomNum=String.valueOf(room_No);
+    @RequestMapping("/checkout/{room_No}")
+    public boolean checkOut(@PathVariable String room_No) {
+        Integer roomNumber = Integer.valueOf(room_No);
+        log.info("登出房间号:{}",roomNumber);
+        String roomNum=String.valueOf(roomNumber);
         Room result = roomService.lambdaQuery().eq(Room::getRoomNumber, roomNum).one();
         if (result == null) {
             log.info("checkOut: room_No={}, result=null");
@@ -71,11 +73,12 @@ public class RoomController {
                 .set(Room::getCheckInDate, null)
                 .set(Room::getCheckOutDate, null)
                 .set(Room::getIsOccupied, 0)
+                .set(Room::getTotalFee,0.0)
                 .update();
-        customerService.lambdaUpdate()
-                .eq(Customer::getRoomNumberId, roomNum)
-                .set(Customer::getIsIn, 0)
-                .update();
+        customerService.lambdaQuery()
+                .eq(Customer::getRoomNumberId, roomNumber)
+                .list()
+                .forEach(customerService::removeById);
         return true;
     }
 

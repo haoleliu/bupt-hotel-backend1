@@ -24,7 +24,7 @@ public class ExcelServiceImpl implements ExcelService {
     @Resource
     private CustomerService customerService;
 
-    private String PATH = "F:\\2024Java-Study\\bupt\\bupt_se_hotelSys\\bupt-hotel-backend\\src\\main\\resources\\excels\\";
+    private String PATH = "C:\\Users\\meinfurher\\bupt-hotel-backend1\\src\\main\\resources\\excels\\";
 
 
     public List<ContractData> data(Room room, Customer customer) {

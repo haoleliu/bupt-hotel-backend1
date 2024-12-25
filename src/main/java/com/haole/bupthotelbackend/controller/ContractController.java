@@ -22,7 +22,7 @@ public class ContractController {
     @Resource
     private ExcelService excelService;
 
-    private String PATH = "F:\\2024Java-Study\\bupt\\bupt_se_hotelSys\\bupt-hotel-backend\\src\\main\\resources\\excels\\";
+    private String PATH = "C:\\Users\\meinfurher\\bupt-hotel-backend1\\src\\main\\resources\\excels\\";
 
     @RequestMapping("/download/{room_number}")
     public ResponseEntity<FileSystemResource> downloadContract(@PathVariable Integer room_number) {

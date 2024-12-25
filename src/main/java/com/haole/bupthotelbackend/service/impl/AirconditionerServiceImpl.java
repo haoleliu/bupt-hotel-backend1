@@ -96,17 +96,17 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
             //风速n，就是一分钟n度电，费率是一度电一块钱。
             log.info("原空调使用时间:{}", room.getAcUsageTime());
             long seconds = duration.toSeconds();
-            BigDecimal fee = BigDecimal.valueOf(1.0 * seconds / 60 * rate / 3);
+            BigDecimal fee = BigDecimal.valueOf(1.0 * seconds / 10 * RateEnums.getEnumByValue(rate).getText());
             room.setAcFee(room.getAcFee().add(fee));
-            room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 60 / 3)));
+            room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 10)));
             if (room.getCurrentTemperature().compareTo(airconditioner.getTemperature()) < 0) {
                 //房间温度小于设定温度
-                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 60)));
+                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 10)));
             } else {
                 //房间温度大于设
-                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(seconds / 60)));
+                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(seconds / 10)));
             }
-            room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 60)));
+            room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 10)));
             log.info("空调费用为{},持续使用时间为{}", fee, duration);
             roomService.lambdaUpdate()
                     .eq(Room::getRoomNumber, room_number)
@@ -222,17 +222,17 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
         if (airconditioner.getPower() == 1) {
             //空调在使用过程中，实时计算费用
             //log.info("距离上次使用的秒数:{}", seconds);
-            BigDecimal fee = BigDecimal.valueOf(1.0 * seconds * airconditioner.getSpeed() / 3 / 60);
+            BigDecimal fee = BigDecimal.valueOf(1.0 * seconds * RateEnums.getEnumByValue(rate).getText() / 10);
             //room更新费用
             room.setAcFee(room.getAcFee().add(fee));
-            room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 3 / 60)));
+            room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 10)));
             room.setTotalFee(room.getTotalFee().add(fee));
             if (room.getCurrentTemperature().compareTo(airconditioner.getTemperature()) < 0) {
                 //房间温度小于设定温度
-                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(1.0*RateEnums.getEnumByValue(rate).getText() * seconds / 60)));
+                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(1.0*RateEnums.getEnumByValue(rate).getText() * seconds / 10)));
             } else {
                 //房间温度大于设定温度
-                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(1.0 *RateEnums.getEnumByValue(rate).getText()* seconds / 60)));
+                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(1.0 *RateEnums.getEnumByValue(rate).getText()* seconds / 10)));
             }
             roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number).update(room);
             //airconditioner更新使用时间
@@ -246,12 +246,12 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
                 //房间温度小于环境温度
                 roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
                         .set(Room::getCurrentTemperature,
-                                room.getCurrentTemperature().add(BigDecimal.valueOf(1.0*RateEnums.getEnumByValue(rate).getText()*seconds/ 60)));
+                                room.getCurrentTemperature().add(BigDecimal.valueOf(0.5*seconds/ 10)));
             } else {
                 //房间温度大于环境温度
                 roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
                         .set(Room::getCurrentTemperature,
-                                room.getCurrentTemperature().subtract(BigDecimal.valueOf((1.0*RateEnums.getEnumByValue(rate).getText()*seconds / 60))));
+                                room.getCurrentTemperature().subtract(BigDecimal.valueOf((0.5*seconds / 10))));
             }
         }
         StatusRsp result = new StatusRsp();
