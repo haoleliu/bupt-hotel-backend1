@@ -56,6 +56,19 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
                 inUsingNum++;
             }
         }
+        // If the request is to turn off the air conditioner and the room is in the waiting queue
+        /*if (request.getPower() == false && waitqueueThis != null && waitqueueThis.getIsWaiting() == 1) {
+            waitqueueService.lambdaUpdate()
+                    .eq(Waitqueue::getRoomNum, room_number)
+                    .set(Waitqueue::getWaitingTime, BigDecimal.valueOf(0))
+                    .set(Waitqueue::getIsWaiting, 0)
+                    .update();
+            waitqueueThis.setIsWaiting(0);
+            this.lambdaUpdate().eq(Airconditioner::getRoomId, room_number)
+                    .set(Airconditioner::getQueue, String.valueOf(waitqueueThis.getIsWaiting()))
+                    .update();
+            log.info("退出等待队列");
+        }*/
         //如果使用队列满了，加入等待队列中
         if (inUsingNum >= 3 && request.getPower() == true) {
             result = false;
@@ -99,6 +112,7 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
             long seconds = duration.toSeconds();
             BigDecimal fee = BigDecimal.valueOf(1.0 * seconds / 10 * RateEnums.getEnumByValue(rate).getText());
             room.setAcFee(room.getAcFee().add(fee));
+            room.setTotalFee(room.getTotalFee().add(fee));
             room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 10)));
             if (room.getCurrentTemperature().compareTo(airconditioner.getTemperature()) < 0) {
                 //房间温度小于设定温度
@@ -165,8 +179,10 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
                 .list();
         List<Airconditioner> usingACList = this.lambdaQuery()
                 .eq(Airconditioner::getPower, 1)
-                .orderBy(true, false, Airconditioner::getAcUsageTime)
+                .orderBy(true, false, Airconditioner::getAcUsageTime) // 按 AcUsageTime 降序排列
+                .orderBy(true, true, Airconditioner::getSpeed) // 按 speed 升序排列
                 .list();
+
         String alterRoomNumber = null;
         if (usingACList.size() > 0) {
             Airconditioner alterAC = usingACList.get(0);
@@ -191,102 +207,108 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
         //如果超过三个空调在使用中，需要一个调度算法，找到等待时间超过20s的空调，换掉总使用时间最长的空调
         if (totalUsingNum == 3 && size > 0) {
             for (Waitqueue waitRoom : list) {
-                if (waitRoom.getWaitingTime().compareTo(BigDecimal.valueOf(20)) > 0) {
-                    //找到等待时间超过20s的空调，开启
-                    int num = waitRoom.getRoomNum();
-                    this.lambdaUpdate().eq(Airconditioner::getId, num)
-                            .set(Airconditioner::getPower, 1)
-                            .set(Airconditioner::getQueue, 0)
-                            .update();
-                    waitqueueService.lambdaUpdate().eq(Waitqueue::getRoomNum, num)
-                            .set(Waitqueue::getIsWaiting, 0)
-                            .set(Waitqueue::getWaitingTime, BigDecimal.valueOf(0))
-                            .set(Waitqueue::getLastRequestTime, new Date())
-                            .set(Waitqueue::getWaitingTime, 0)
-                            .update();
-                    //将使用时间最长的空调，关闭
-                    this.lambdaUpdate().eq(Airconditioner::getId, alterRoomNumber)
-                            .set(Airconditioner::getPower, 0)
-                            .set(Airconditioner::getQueue, 1)
-                            .update();
-                    waitqueueService.lambdaUpdate().eq(Waitqueue::getRoomNum, alterRoomNumber)
-                            .set(Waitqueue::getIsWaiting, 1)
-                            .set(Waitqueue::getWaitingTime, BigDecimal.valueOf(0))
-                            .set(Waitqueue::getLastRequestTime, new Date())
-                            .set(Waitqueue::getWaitingTime, 0)
-                            .update();
-                    // 存储记录
-                    Room alterRoom = roomService.lambdaQuery().eq(Room::getRoomNumber, alterRoomNumber).one();
-                    Airconditioner alterAirconditioner = this.lambdaQuery().eq(Airconditioner::getId, Long.valueOf(alterRoomNumber)).one();
-                    Record record1 = new Record();
-                    record1.setAcFee(alterRoom.getAcFee());
-                    record1.setAcUsageTime(alterRoom.getAcUsageTime());
-                    record1.setCurrentTemperature(alterRoom.getCurrentTemperature());
-                    record1.setSpeed(alterAirconditioner.getSpeed());
-                    record1.setTemperature(alterAirconditioner.getTemperature());
-                    record1.setTimestamp(new Date());
+                int waitRoomNum = waitRoom.getRoomNum();
+                Airconditioner waitRoomAC = this.lambdaQuery().eq(Airconditioner::getId, waitRoomNum).one();
+                int waitRoomSpeed = waitRoomAC.getSpeed();
 
-                    GlobalRecordStorage.getInstance().addRecord(Long.valueOf(alterRoomNumber), record1);
+                    if (((waitRoom.getWaitingTime().compareTo(BigDecimal.valueOf(20)) > 0 )&&usingACList.get(0).getSpeed()<=waitRoomSpeed) ||usingACList.get(0).getSpeed()<waitRoomSpeed){
+                        //找到等待时间超过20s的空调，开启
+                        int num = waitRoom.getRoomNum();
+                        this.lambdaUpdate().eq(Airconditioner::getId, num)
+                                .set(Airconditioner::getPower, 1)
+                                .set(Airconditioner::getQueue, 0)
+                                .update();
+                        waitqueueService.lambdaUpdate().eq(Waitqueue::getRoomNum, num)
+                                .set(Waitqueue::getIsWaiting, 0)
+                                .set(Waitqueue::getWaitingTime, BigDecimal.valueOf(0))
+                                .set(Waitqueue::getLastRequestTime, new Date())
+                                .set(Waitqueue::getWaitingTime, 0)
+                                .update();
+                        //将使用时间最长的空调，关闭
+                        this.lambdaUpdate().eq(Airconditioner::getId, alterRoomNumber)
+                                .set(Airconditioner::getPower, 0)
+                                .set(Airconditioner::getQueue, 1)
+                                .update();
+                        waitqueueService.lambdaUpdate().eq(Waitqueue::getRoomNum, alterRoomNumber)
+                                .set(Waitqueue::getIsWaiting, 1)
+                                .set(Waitqueue::getWaitingTime, BigDecimal.valueOf(0))
+                                .set(Waitqueue::getLastRequestTime, new Date())
+                                .set(Waitqueue::getWaitingTime, 0)
+                                .update();
+                        // 存储记录
+                        Room alterRoom = roomService.lambdaQuery().eq(Room::getRoomNumber, alterRoomNumber).one();
+                        Airconditioner alterAirconditioner = this.lambdaQuery().eq(Airconditioner::getId, Long.valueOf(alterRoomNumber)).one();
+                        Record record1 = new Record();
+                        record1.setAcFee(alterRoom.getAcFee());
+                        record1.setAcUsageTime(alterRoom.getAcUsageTime());
+                        record1.setCurrentTemperature(alterRoom.getCurrentTemperature());
+                        record1.setSpeed(alterAirconditioner.getSpeed());
+                        record1.setTemperature(alterAirconditioner.getTemperature());
+                        record1.setTimestamp(new Date());
+
+                        GlobalRecordStorage.getInstance().addRecord(Long.valueOf(alterRoomNumber), record1);
+                    }
                 }
             }
-        }
 
-        List<Waitqueue> waitqueueList = waitqueueService.lambdaQuery().list();
-        if (airconditioner == null) {
-            return null;
-        }
-        LocalDateTime nowTime = LocalDateTime.now();
-        Date lastStartTime = airconditioner.getLastStartTime();
-        LocalDateTime lastAcUseTime = LocalDateTime.ofInstant(lastStartTime.toInstant(), ZoneId.systemDefault());
-        Duration duration = Duration.between(lastAcUseTime, nowTime);
-        //计算空调距离数据库中的lastUseTime到现在的时间差
-        long seconds = duration.toSeconds();
-        if (airconditioner.getPower() == 1) {
-            //空调在使用过程中，实时计算费用
-            //log.info("距离上次使用的秒数:{}", seconds);
-            BigDecimal fee = BigDecimal.valueOf(1.0 * seconds * RateEnums.getEnumByValue(rate).getText() / 10);
-            //room更新费用
-            room.setAcFee(room.getAcFee().add(fee));
-            room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 10)));
-            room.setTotalFee(room.getTotalFee().add(fee));
-            if (room.getCurrentTemperature().compareTo(airconditioner.getTemperature()) < 0) {
-                //房间温度小于设定温度
-                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(1.0*RateEnums.getEnumByValue(rate).getText() * seconds / 10)));
-            } else {
-                //房间温度大于设定温度
-                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(1.0 *RateEnums.getEnumByValue(rate).getText()* seconds / 10)));
+            List<Waitqueue> waitqueueList = waitqueueService.lambdaQuery().list();
+            if (airconditioner == null) {
+                return null;
             }
-            roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number).update(room);
-            //airconditioner更新使用时间
-            airconditioner.setLastStartTime(new Date());
-            this.lambdaUpdate().eq(Airconditioner::getId, room_number)
-                    .set(Airconditioner::getLastStartTime, new Date())
-                    .update();
-        } else {
-            //空调未使用，更新房间温度
-            if (room.getCurrentTemperature().compareTo(BigDecimal.valueOf(room.getEnvironmentTemperature())) < 0) {
-                //房间温度小于环境温度
-                roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
-                        .set(Room::getCurrentTemperature,
-                                room.getCurrentTemperature().add(BigDecimal.valueOf(0.5*seconds/ 10)));
+            LocalDateTime nowTime = LocalDateTime.now();
+            Date lastStartTime = airconditioner.getLastStartTime();
+            LocalDateTime lastAcUseTime = LocalDateTime.ofInstant(lastStartTime.toInstant(), ZoneId.systemDefault());
+            Duration duration = Duration.between(lastAcUseTime, nowTime);
+            //计算空调距离数据库中的lastUseTime到现在的时间差
+            long seconds = duration.toSeconds();
+            if (airconditioner.getPower() == 1) {
+                //空调在使用过程中，实时计算费用
+                //log.info("距离上次使用的秒数:{}", seconds);
+                BigDecimal fee = BigDecimal.valueOf(1.0 * seconds * RateEnums.getEnumByValue(rate).getText() / 10);
+                //room更新费用
+                room.setAcFee(room.getAcFee().add(fee));
+                room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 10)));
+                room.setTotalFee(room.getTotalFee().add(fee));
+                if (room.getCurrentTemperature().compareTo(airconditioner.getTemperature()) < 0) {
+                    //房间温度小于设定温度
+                    room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(1.0 * RateEnums.getEnumByValue(rate).getText() * seconds / 10)));
+                } else {
+                    //房间温度大于设定温度
+                    room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(1.0 * RateEnums.getEnumByValue(rate).getText() * seconds / 10)));
+                }
+                roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number).update(room);
+                //airconditioner更新使用时间
+                airconditioner.setLastStartTime(new Date());
+                this.lambdaUpdate().eq(Airconditioner::getId, room_number)
+                        .set(Airconditioner::getLastStartTime, new Date())
+                        .update();
             } else {
-                //房间温度大于环境温度
-                roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
-                        .set(Room::getCurrentTemperature,
-                                room.getCurrentTemperature().subtract(BigDecimal.valueOf((0.5*seconds / 10))));
+                //空调未使用，更新房间温度
+                if (room.getCurrentTemperature().compareTo(BigDecimal.valueOf(room.getEnvironmentTemperature())) < 0) {
+                    //房间温度小于环境温度
+                    roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
+                            .set(Room::getCurrentTemperature,
+                                    room.getCurrentTemperature().add(BigDecimal.valueOf(0.5 * seconds / 10)));
+                } else {
+                    //房间温度大于环境温度
+                    roomService.lambdaUpdate().eq(Room::getRoomNumber, room_number)
+                            .set(Room::getCurrentTemperature,
+                                    room.getCurrentTemperature().subtract(BigDecimal.valueOf((0.5 * seconds / 10))));
+                }
+                //在这里增加一条能在控制台看见的输出
+                //log.info("关机状态回温");
             }
+            StatusRsp result = new StatusRsp();
+            result.setMode(airconditioner.getMode());
+            result.setSpeed(SpeedEnums.getEnumByValue(airconditioner.getSpeed()).getText());
+            result.setPower((airconditioner.getPower() == 1));
+            result.setCost(room.getAcFee());
+            //queue里面
+            result.setQueue(String.valueOf(waitqueueThis.getIsWaiting()));
+            result.setTime(room.getAcUsageTime());
+            return result;
         }
-        StatusRsp result = new StatusRsp();
-        result.setMode(airconditioner.getMode());
-        result.setSpeed(SpeedEnums.getEnumByValue(airconditioner.getSpeed()).getText());
-        result.setPower((airconditioner.getPower() == 1));
-        result.setCost(room.getAcFee());
-        //queue里面
-        result.setQueue(String.valueOf(waitqueueThis.getIsWaiting()));
-        result.setTime(room.getAcUsageTime());
-        return result;
     }
-}
 
 
 
