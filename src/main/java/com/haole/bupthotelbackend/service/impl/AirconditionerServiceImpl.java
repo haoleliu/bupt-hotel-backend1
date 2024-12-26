@@ -25,7 +25,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import com.haole.bupthotelbackend.service.GlobalRecordStorage;
+import com.haole.bupthotelbackend.model.domain.Record;
 /**
  * @author liu haole
  * @description 针对表【airconditioner】的数据库操作Service实现
@@ -101,12 +102,21 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
             room.setAcUsageTime(room.getAcUsageTime().add(BigDecimal.valueOf(1.0 * seconds / 10)));
             if (room.getCurrentTemperature().compareTo(airconditioner.getTemperature()) < 0) {
                 //房间温度小于设定温度
-                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 10)));
+                room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 10.0 * RateEnums.getEnumByValue(rate).getText())));
             } else {
                 //房间温度大于设
-                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(seconds / 10)));
+                room.setCurrentTemperature(room.getCurrentTemperature().subtract(BigDecimal.valueOf(seconds / 10.0* RateEnums.getEnumByValue(rate).getText())));
             }
-            room.setCurrentTemperature(room.getCurrentTemperature().add(BigDecimal.valueOf(seconds / 10)));
+            // 存储记录
+            Record record = new Record();
+            record.setAcFee(room.getAcFee());
+            record.setAcUsageTime(room.getAcUsageTime());
+            record.setCurrentTemperature(room.getCurrentTemperature());
+            record.setSpeed(airconditioner1.getSpeed());
+            record.setTemperature(airconditioner1.getTemperature());
+            record.setTimestamp(new Date());
+
+            GlobalRecordStorage.getInstance().addRecord(room_number, record);
             log.info("空调费用为{},持续使用时间为{}", fee, duration);
             roomService.lambdaUpdate()
                     .eq(Room::getRoomNumber, room_number)
@@ -205,6 +215,18 @@ public class AirconditionerServiceImpl extends ServiceImpl<AirconditionerMapper,
                             .set(Waitqueue::getLastRequestTime, new Date())
                             .set(Waitqueue::getWaitingTime, 0)
                             .update();
+                    // 存储记录
+                    Room alterRoom = roomService.lambdaQuery().eq(Room::getRoomNumber, alterRoomNumber).one();
+                    Airconditioner alterAirconditioner = this.lambdaQuery().eq(Airconditioner::getId, Long.valueOf(alterRoomNumber)).one();
+                    Record record1 = new Record();
+                    record1.setAcFee(alterRoom.getAcFee());
+                    record1.setAcUsageTime(alterRoom.getAcUsageTime());
+                    record1.setCurrentTemperature(alterRoom.getCurrentTemperature());
+                    record1.setSpeed(alterAirconditioner.getSpeed());
+                    record1.setTemperature(alterAirconditioner.getTemperature());
+                    record1.setTimestamp(new Date());
+
+                    GlobalRecordStorage.getInstance().addRecord(Long.valueOf(alterRoomNumber), record1);
                 }
             }
         }
