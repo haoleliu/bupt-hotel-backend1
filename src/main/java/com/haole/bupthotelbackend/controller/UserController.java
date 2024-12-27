@@ -21,7 +21,7 @@ import static com.haole.bupthotelbackend.constant.UserConstant.USER_LOGIN_STATE;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178"}, allowCredentials = "true")
 @Slf4j
 public class UserController {
 

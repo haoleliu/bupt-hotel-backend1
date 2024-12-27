@@ -11,10 +11,9 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178:8080"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:8080","http://82.156.126.178"}, allowCredentials = "true")
 @RestController
 public class RoomController {
 
